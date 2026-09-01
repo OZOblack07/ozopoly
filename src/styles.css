@@ -1,0 +1,237 @@
+@import "tailwindcss";
+
+@theme {
+  --font-display: "Syne", "Segoe UI", system-ui, sans-serif;
+  --font-sans: "Figtree", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+
+  --color-bg: #07080f;
+  --color-bg-elevated: #10131c;
+  --color-bg-subtle: #171b28;
+  --color-fg: #eef1f6;
+  --color-muted: #8b93a7;
+  --color-subtle: #5c6578;
+  --color-line: color-mix(in oklab, #eef1f6 12%, transparent);
+  --color-line-strong: color-mix(in oklab, #eef1f6 22%, transparent);
+  --color-gold: #e4c37a;
+  --color-gold-fg: #1a1408;
+  --color-cyan: #5eead4;
+  --color-danger: #f07178;
+  --color-ok: #5ecf8e;
+
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --radius-xl: 28px;
+
+  --shadow-soft: 0 18px 50px -24px rgb(0 0 0 / 0.7);
+}
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background: var(--color-bg);
+    color: var(--color-fg);
+  }
+  body {
+    font-family: var(--font-sans);
+    min-height: 100dvh;
+    background: var(--color-bg);
+    color: var(--color-fg);
+  }
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+  h1, h2, h3 {
+    font-family: var(--font-display);
+    text-wrap: balance;
+    letter-spacing: -0.03em;
+  }
+  p {
+    text-wrap: pretty;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-gold);
+    outline-offset: 3px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.reduce-motion *,
+  html.reduce-motion *::before,
+  html.reduce-motion *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+.oz-app {
+  min-height: 100dvh;
+  background:
+    radial-gradient(1200px 600px at 80% -10%, color-mix(in oklab, var(--color-cyan) 10%, transparent), transparent 60%),
+    radial-gradient(900px 500px at -10% 110%, color-mix(in oklab, var(--color-gold) 8%, transparent), transparent 55%),
+    var(--color-bg);
+}
+
+.oz-panel {
+  background: color-mix(in oklab, var(--color-bg-elevated) 88%, transparent);
+  border: 1px solid var(--color-line);
+  box-shadow: var(--shadow-soft);
+}
+
+.oz-board {
+  display: grid;
+  grid-template-columns: 1.28fr repeat(9, 1fr) 1.28fr;
+  grid-template-rows: 1.28fr repeat(9, 1fr) 1.28fr;
+  width: min(100%, 92dvh);
+  aspect-ratio: 1;
+  margin-inline: auto;
+  background:
+    linear-gradient(180deg, color-mix(in oklab, var(--color-bg-elevated) 80%, #000), #0b0d16);
+  border: 1px solid var(--color-line-strong);
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow:
+    0 0 0 1px color-mix(in oklab, var(--color-gold) 18%, transparent),
+    0 30px 80px -40px rgb(0 0 0 / 0.85);
+  position: relative;
+}
+
+.oz-tile {
+  position: relative;
+  border: 1px solid color-mix(in oklab, var(--color-fg) 10%, transparent);
+  background: #121624;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.oz-tile[data-side="bottom"] { justify-content: flex-start; }
+.oz-tile[data-side="top"] { justify-content: flex-end; }
+.oz-tile[data-side="left"] { justify-content: flex-start; }
+.oz-tile[data-side="right"] { justify-content: flex-start; }
+
+.oz-stripe {
+  height: 18%;
+  min-height: 6px;
+  width: 100%;
+  flex: 0 0 auto;
+}
+.oz-tile[data-side="left"] .oz-stripe {
+  position: absolute;
+  right: 0;
+  top: 0;
+  height: 100%;
+  width: 16%;
+}
+.oz-tile[data-side="right"] .oz-stripe {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 16%;
+}
+
+.oz-center {
+  grid-column: 2 / 11;
+  grid-row: 2 / 11;
+  display: grid;
+  place-items: center;
+  background:
+    radial-gradient(circle at 50% 40%, color-mix(in oklab, var(--color-gold) 16%, transparent), transparent 55%),
+    #0c101b;
+  position: relative;
+}
+
+.dice-scene {
+  width: 72px;
+  height: 72px;
+  perspective: 400px;
+}
+.dice-cube {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 900ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.dice-cube.rolling {
+  animation: dice-spin 0.7s linear infinite;
+}
+.dice-face {
+  position: absolute;
+  inset: 0;
+  background: #f4efe4;
+  color: #1a1408;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.6rem;
+  box-shadow: inset 0 0 0 2px #d9c8a0;
+  backface-visibility: hidden;
+}
+.dice-face:nth-child(1) { transform: rotateY(0deg) translateZ(36px); }
+.dice-face:nth-child(2) { transform: rotateY(90deg) translateZ(36px); }
+.dice-face:nth-child(3) { transform: rotateY(180deg) translateZ(36px); }
+.dice-face:nth-child(4) { transform: rotateY(-90deg) translateZ(36px); }
+.dice-face:nth-child(5) { transform: rotateX(90deg) translateZ(36px); }
+.dice-face:nth-child(6) { transform: rotateX(-90deg) translateZ(36px); }
+
+@keyframes dice-spin {
+  to { transform: rotateX(420deg) rotateY(280deg) rotateZ(80deg); }
+}
+
+.float-y {
+  animation: floaty 7s ease-in-out infinite;
+}
+@keyframes floaty {
+  50% { transform: translateY(-10px); }
+}
+
+.shimmer {
+  background: linear-gradient(90deg, transparent, color-mix(in oklab, var(--color-gold) 18%, transparent), transparent);
+  background-size: 200% 100%;
+  animation: shimmer 2.4s linear infinite;
+}
+@keyframes shimmer {
+  to { background-position: 200% 0; }
+}
+
+.money-pop {
+  animation: money-pop 900ms var(--ease, cubic-bezier(0.22, 1, 0.36, 1)) both;
+}
+@keyframes money-pop {
+  from { opacity: 0; transform: translateY(8px) scale(0.96); }
+  30% { opacity: 1; transform: translateY(-4px) scale(1.04); }
+  to { opacity: 0; transform: translateY(-28px) scale(1); }
+}
+
+.confetti-dot {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  animation: confetti 1.6s ease-in forwards;
+}
+@keyframes confetti {
+  to { transform: translateY(70vh) rotate(220deg); opacity: 0; }
+}
+
+.token-piece {
+  filter: drop-shadow(0 6px 8px rgb(0 0 0 / 0.45));
+  transition: transform 180ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.token-piece.hop {
+  animation: hop 280ms cubic-bezier(0.34, 1.4, 0.64, 1);
+}
+@keyframes hop {
+  50% { transform: translateY(-10px) scale(1.08); }
+}
