@@ -1,18 +1,14 @@
 import { createMiddleware } from "@tanstack/react-start";
+import { getSessionUser } from "@/lib/auth/verify.server";
 
-/** Session if present; does not throw when signed out (needed for guest play). */
 export const optionalAuth = createMiddleware({ type: "function" })
-  .client(async ({ next }) => {
-    const { getBearerToken } = await import("@/lib/auth/client");
-    return next({ sendContext: { bearerToken: getBearerToken() ?? undefined } });
-  })
-  .server(async ({ next, context }) => {
-    const { getSessionUser } = await import("@/lib/auth/verify.server");
-    const user = await getSessionUser(context.bearerToken);
+  .server(async ({ next }) => {
+    const user = await getSessionUser();
+
     return next({
       context: {
+        user,
         userId: user?.id ?? null,
-        email: user?.email ?? null,
       },
     });
   });

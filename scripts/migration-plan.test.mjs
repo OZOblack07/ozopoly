@@ -64,7 +64,7 @@ test("the auth schema ships outside the globbed directory", () => {
 
 test("this workspace's auth schema copy is byte-identical to its source", () => {
   // An edited copy diverges silently: basename keying skips it on a database
-  // that already ran the original, and applies it on a fresh PGLite preview.
+  // that already ran the original, and applies it on a fresh database.
   const pair = authSchemaCopy(projectRoot());
   if (pair === null) return; // sign-in off — nothing has been copied up
   assert.equal(

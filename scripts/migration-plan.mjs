@@ -1,15 +1,13 @@
 // @ts-check
 /**
- * Migration bookkeeping shared by the two appliers — `scripts/migrate.mjs`
- * (deploy, `readdir`) and `src/lib/db.ts` (PGLite preview, `import.meta.glob`).
+ * Migration bookkeeping shared by the deploy-time PostgreSQL applier.
  *
- * Applied files are keyed by BASENAME, so the same file applies once no matter
- * which directory it is globbed from. That is what makes the auth schema safe to
- * copy from `migrations/auth/` into `migrations/` when an app turns sign-in on:
- * a database that already has `0001_auth.sql` will not re-run it.
+ * Applied files are keyed by BASENAME so each migration is applied only once.
+ * This also keeps the auth schema migration safe if `0001_auth.sql` is copied
+ * from `migrations/auth/` into `migrations/`.
  *
- * Neither applier descends into subdirectories, so `migrations/auth/*.sql` is
- * out of scope for both until it is copied up.
+ * The deploy-time migrator only processes SQL files directly inside
+ * `migrations/`; `migrations/auth/*.sql` remains out of scope until copied up.
  */
 
 /**
